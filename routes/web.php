@@ -26,7 +26,6 @@ Route::group([
 ], function() {
     // admin.categories.index
     Route::get('/', 'CategoriesController@index')->name('index');
-   
     // admin.categories.create
     Route::get('/create', 'CategoriesController@create')->name('create');
     Route::get('/{id}', 'CategoriesController@show')->name('show');
