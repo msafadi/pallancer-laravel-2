@@ -1,8 +1,11 @@
-@extends('layouts.dashboard')
+<x-dashboard-layout title="Categories" subtitle="Sub title">
 
-@section('title', 'Categories List')
-
-@section('content')
+    <x-alert title="Title" type="danger" :url="URL::current()">
+        <x-slot name="actions">
+            <a href="#" class="btn btn-danger">Action Button</a>
+        </x-slot>
+        My message body
+    </x-alert>
 
     <div class="table-toolbar mb-3">
         <a href="{{ route('admin.categories.create') }}" class="btn btn-info">Create</a>
@@ -49,4 +52,4 @@
         </tbody>
     </table>
 
-@endsection
+</x-dashboard-layout>

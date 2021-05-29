@@ -38,12 +38,12 @@ Route::group([
 //Route::resource('admin/categories', 'Admin\CategoriesController');
 
 
-/*
+
 Route::prefix('admin/categories')
     ->namespace('Admin')
     ->as('admin.categories.')
     ->group(function() {
         
     });
-*/
+
 

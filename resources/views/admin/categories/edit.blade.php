@@ -1,8 +1,4 @@
-@extends('layouts.dashboard')
-
-@section('title', 'Edit Category')
-
-@section('content')
+<x-dashboard-layout title="Edit Category">
 
 <form action="{{ route('admin.categories.update', $id) }}" method="post" enctype="multipart/form-data">
     @csrf
@@ -13,4 +9,4 @@
     ])
 </form>
 
-@endsection
+</x-dashboard-layout>
