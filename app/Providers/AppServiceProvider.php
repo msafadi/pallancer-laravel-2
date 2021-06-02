@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 
@@ -33,5 +34,11 @@ class AppServiceProvider extends ServiceProvider
             }
             return true;
         }, 'Invalid Word!');
+
+        // With vendor:publish
+        //Paginator::defaultView('vendor.pagination.bootstrap-4');
+        //Paginator::defaultSimpleView('vendor.pagination.simple-bootstrap-4');
+        // Without vendor:publish
+        Paginator::useBootstrap();
     }
 }

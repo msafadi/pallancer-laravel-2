@@ -24,4 +24,9 @@ class Store extends Model
     const CREATED_AT = 'created_at';
 
     const UPDATED_AT = 'updated_at';
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'store_id', 'id');
+    }
 }

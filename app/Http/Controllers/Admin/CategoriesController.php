@@ -20,19 +20,24 @@ class CategoriesController extends Controller
     {
         $categories = Category::when($request->name, function($query, $value) {
                 $query->where(function($query) use ($value) {
-                    $query->where('name', 'LIKE', "%{$value}%")
-                        ->orWhere('description', 'LIKE', "%{$value}%");
+                    $query->where('categories.name', 'LIKE', "%{$value}%")
+                        ->orWhere('categories.description', 'LIKE', "%{$value}%");
                 });
             })
             ->when($request->parent_id, function($query, $value) {
-                $query->where('parent_id', '=', $value);
+                $query->where('categories.parent_id', '=', $value);
             })
-            ->leftJoin('categories as parents', 'parents.id', '=', 'categories.parent_id')
+            /*->leftJoin('categories as parents', 'parents.id', '=', 'categories.parent_id')
             ->select([
                 'categories.*',
                 'parents.name as parent_name'
-            ])
+            ])*/
+            // Eager loading
+            ->with('parent')
             ->get();
+        
+        // SELECT * FROM categories
+        // SELECT * FROM categories WHERE id IN (....)
 
         $names = [];
         $data = [];
