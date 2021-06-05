@@ -37,6 +37,9 @@
 </div>
 <div class="form-group mb-3">
     <label for="">Image:</label>
+    <div class="mb-2">
+        <img src="{{ $product->image_url }}" height="200" alt="">
+    </div>    
     <input type="file" name="image" class="form-control @error('image') is-invalid @enderror">
     @error('image')
     <p class="invalid-feedback">{{ $message }}</p>

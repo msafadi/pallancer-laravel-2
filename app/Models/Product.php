@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
@@ -42,6 +44,25 @@ class Product extends Model
             'id',
             'id',
         );
+    }
+
+    // Accessors:
+    // get{AttrName}Attribute
+    // $product->image_url
+    public function getImageUrlAttribute()
+    {
+        if ($this->image) {
+            //return asset('uploads/' . $this->image);
+            return Storage::disk('uploads')->url($this->image);
+        }
+
+        return asset('images/default-image.jpg');
+    }
+
+    // Mutators
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = Str::title($value);
     }
 
     public static function validateRules()

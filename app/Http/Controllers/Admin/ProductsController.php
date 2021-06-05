@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProductsController extends Controller
@@ -50,16 +51,23 @@ class ProductsController extends Controller
     public function store(Request $request)
     {
         $request->validate(Product::validateRules());
+        $request->merge([
+            'slug' => Str::slug($request->post('name')),
+            'store_id' => 1,
+        ]);
+
+        $data = $request->all();
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $data['image'] = $file->store('/');
+        }
         
         // $data = $request->all();
         // $data['slug'] = Str::slug($data['name']);
         // $product = Product::create($data);
 
-        $request->merge([
-            'slug' => Str::slug($request->post('name')),
-            'store_id' => 1,
-        ]);
-        $product = Product::create($request->all());
+        $product = Product::create($data);
 
         /*$product = new Product($request->all());
         $product->save();*/
@@ -110,7 +118,27 @@ class ProductsController extends Controller
 
         $request->validate(Product::validateRules());
 
-        $product->update($request->all());
+        $data = $request->all();
+        $previous = false;
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            //$file->getClientOriginalName();
+            //$file->getClientOriginalExtension();
+            //$file->getSize();
+            //$file->getMimeType(); // image/jpeg
+            //$file->move(public_path('/images'), uniqid() . '.' .  $file->getClientOriginalExtension());
+
+            $data['image'] = $file->store('/images', [
+                'disk' => 'uploads'
+            ]);
+            $previous = $product->image;
+        }
+
+        $product->update($data);
+        if ($previous) {
+            Storage::disk('uploads')->delete($previous);
+        }
         //$product->fill($request->all())->save();
 
         return redirect()->route('admin.products.index')
@@ -127,6 +155,12 @@ class ProductsController extends Controller
     {
         $product = Product::findOrFail($id);
         $product->delete();
+
+        if ($product->image) {
+            Storage::disk('uploads')->delete($product->image);
+            
+            //unlink(public_path('images/' . $product->image));
+        }
 
         return redirect()->route('admin.products.index')
             ->with('success', "Product ($product->name) deleted!");
