@@ -264,4 +264,19 @@ class CategoriesController extends Controller
             return redirect()->back()->withInput()->withErrors($validator);
         }*/
     }
+
+    public function storeProduct(Request $request, $id)
+    {
+        $category = Category::findOrFail($id);
+
+        $product = $category->products()->create([
+            'name' => 'Product Name',
+            'price' => 10,
+        ]);
+
+        //$product->category()->associate($category);
+        //$product->save();
+        //$product->category()->dissociate();
+        //$product->save();
+    }
 }

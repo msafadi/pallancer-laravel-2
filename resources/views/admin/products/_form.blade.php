@@ -46,6 +46,21 @@
     @enderror
 </div>
 <div class="form-group mb-3">
+    <label for="">Gallery:</label>
+    <div class="row">
+        @foreach ($product->images as $image)
+        <div class="col-md-2">
+            <img src="{{ $image->image_url }}" height="80" class="d-block img-fit m-1 border p-1">
+            <button class="btn btn-sm btn-danger" onclick="deleteImage('{{ $image->id }}')">Delete</button>
+        </div>
+        @endforeach
+    </div>
+    <input type="file" name="gallery[]" multiple class="form-control @error('gallery') is-invalid @enderror">
+    @error('gallery')
+    <p class="invalid-feedback">{{ $message }}</p>
+    @enderror
+</div>
+<div class="form-group mb-3">
     <label for="">Price:</label>
     <input type="number" name="price" value="{{ old('price', $product->price) }}" class="form-control @error('price') is-invalid @enderror">
     @error('price')
@@ -67,6 +82,13 @@
     @enderror
 </div>
 <div class="form-group mb-3">
+    <label for="">Tags:</label>
+    <input type="text" name="tags" value="{{ old('tags', $tags) }}" class="tags form-control @error('tags') is-invalid @enderror">
+    @error('tags')
+    <p class="invalid-feedback">{{ $message }}</p>
+    @enderror
+</div>
+<div class="form-group mb-3">
     <label for="">Status:</label>
     <div>
         <label><input type="radio" name="status" value="in-stock" @if (old('status', $product->status) == 'in-stock') checked @endif>
@@ -83,3 +105,25 @@
 <div class="form-group">
     <button type="submit" class="btn btn-primary">{{ $button_label ?? 'Save' }}</button>
 </div>
+
+@push('css')
+<link rel="stylesheet" href="{{ asset('js/tagify/tagify.css') }}">
+@endpush
+
+@push('js')
+<form action="" method="post" id="deleteGallery" class="d-none">
+@csrf
+<input type="hidden" name="id" id="imageId">
+</form>
+<script src="{{ asset('js/tagify/tagify.min.js') }}"></script>
+<script>
+var inputElm = document.querySelector('.tags'),
+    tagify = new Tagify (inputElm);
+
+
+function deleteImage(id) {
+    document.querySelector('#imageId').value = id;
+    document.querySelector('#deleteGallery').submit();
+}
+</script>
+@endpush

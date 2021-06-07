@@ -1,8 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\CategoriesController;
-use App\Http\Controllers\Admin\TagsController;
-use App\Http\Controllers\Admin\UsersController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,14 +14,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/', 'welcome');
+Route::get('/', [HomeController::class, 'index']);
 
-// 'DashboardController@index'
-Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index']);
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+require __DIR__.'/auth.php';
 
 Route::namespace('Admin')
     ->prefix('admin')
     ->as('admin.')
+    ->middleware('auth', 'password.confirm')
     ->group(function() {
 
         Route::group([
@@ -60,7 +62,6 @@ Route::prefix('admin/categories')
         
     });
 
-
 Route::get('regexp', function() {
 
     $test = '059-1234567,059-2332,059-22222';
@@ -73,5 +74,3 @@ Route::get('regexp', function() {
     dd($matches);
 
 });
-
-

@@ -13,6 +13,8 @@ class Product extends Model
 
     protected $perPage = 10;
 
+    //protected $touches = ['category', 'store'];
+
     protected $fillable = [
         'name', 'category_id', 'description', 'price', 'sale_price', 'quantity',
         'image', 'status', 'slug', 'store_id',
@@ -34,6 +36,11 @@ class Product extends Model
         return $this->belongsTo(Store::class, 'store_id', 'id');
     }
 
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class, 'product_id', 'id');
+    }
+
     public function tags()
     {
         return $this->belongsToMany(
@@ -52,6 +59,9 @@ class Product extends Model
     public function getImageUrlAttribute()
     {
         if ($this->image) {
+            if (strpos($this->image, 'http') === 0) {
+                return $this->image;
+            }
             //return asset('uploads/' . $this->image);
             return Storage::disk('uploads')->url($this->image);
         }
