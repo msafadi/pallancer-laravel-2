@@ -16,12 +16,12 @@
             <div class="d-flex">
                 <h1 class="h3">{{ config('app.name') }}</h1>
 
-                {{-- @if (Auth::check()) --}}
-                @auth
+                {{-- @if (Auth::guard('web')->check()) --}}
+                @auth('web')
                 <div class="ms-auto">
-                    Hi, {{ Auth::user()->name }}
+                    Hi, {{ Auth::guard('web')->user()->name }}
                     | <a href="#" onclick="document.getElementById('logout').submit()">Logout</a>
-                    <form id="logout" class="d-none" action="{{ route('logout') }}" method="post">
+                    <form id="logout" class="d-none" action="{{ route('logout', 'web') }}" method="post">
                         @csrf
                     </form>
                 </div>

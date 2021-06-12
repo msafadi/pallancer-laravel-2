@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Auth\Stores\LoginController;
 use App\Http\Controllers\HomeController;
+use App\Http\Middleware\CheckUserType;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,14 +20,23 @@ Route::get('/', [HomeController::class, 'index']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth:web,store'])->name('dashboard');
 
 require __DIR__.'/auth.php';
+
+/*
+Route::get('/stores/login', [LoginController::class, 'create'])
+                ->middleware('guest:store')
+                ->name('stores.login');
+
+Route::post('/stores/login', [LoginController::class, 'store'])
+                ->middleware('guest:store');
+*/
 
 Route::namespace('Admin')
     ->prefix('admin')
     ->as('admin.')
-    ->middleware('auth', 'password.confirm')
+    ->middleware('auth', 'user.type:user')
     ->group(function() {
 
         Route::group([

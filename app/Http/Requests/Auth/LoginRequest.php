@@ -43,11 +43,11 @@ class LoginRequest extends FormRequest
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function authenticate()
+    public function authenticate($guard)
     {
         $this->ensureIsNotRateLimited();
 
-        $user = User::where('email', $this->input('email'))
+        /*$user = User::where('email', $this->input('email'))
             //->orWhere('username', $this->input('email'))
             //->orWhere('mobile', $this->input('email'))
             //->where('status', 'active')
@@ -61,15 +61,15 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        Auth::login($user);
+        Auth::guard('web')->login($user);*/
 
-        /*if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        if (! Auth::guard($guard)->attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
             ]);
-        }*/
+        }
 
         RateLimiter::clear($this->throttleKey());
     }

@@ -10,14 +10,23 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthenticatedSessionController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('guest:web,store')
+            ->except('destroy');
+    }
+
     /**
      * Display the login view.
      *
      * @return \Illuminate\View\View
      */
-    public function create()
+    public function create($guard)
     {
-        return view('auth.login');
+        return view('auth.login', [
+            'guard' => $guard
+        ]);
     }
 
     /**
@@ -26,9 +35,11 @@ class AuthenticatedSessionController extends Controller
      * @param  \App\Http\Requests\Auth\LoginRequest  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(LoginRequest $request)
+    public function store(LoginRequest $request, $guard)
     {
-        $request->authenticate();
+        $request->authenticate($guard);
+
+        session()->put('guard', $guard);
 
         $request->session()->regenerate();
 
@@ -41,9 +52,9 @@ class AuthenticatedSessionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Request $request)
+    public function destroy(Request $request, $guard)
     {
-        Auth::logout();
+        Auth::guard($guard)->logout();
 
         $request->session()->invalidate();
 
