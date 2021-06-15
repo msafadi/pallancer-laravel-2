@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
+use App\Models\User;
 use App\Rules\WordsFilter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -18,6 +19,8 @@ class CategoriesController extends Controller
 
     public function index(Request $request)
     {
+        $this->authorize('view-any', Category::class);
+
         $categories = Category::when($request->name, function($query, $value) {
                 $query->where(function($query) use ($value) {
                     $query->where('categories.name', 'LIKE', "%{$value}%")
@@ -71,6 +74,8 @@ class CategoriesController extends Controller
 
     public function create()
     {
+        $this->authorize('create', Category::class);
+
         $parents = Category::orderBy('name', 'asc')->get();
         return view('admin.categories.create', [
             'parents' => $parents,
@@ -81,6 +86,8 @@ class CategoriesController extends Controller
 
     public function store(CategoryRequest $request)
     {
+        $this->authorize('create', Category::class);
+
         $clean = $this->validateRequest($request);
 
         $category = new Category();
@@ -99,10 +106,11 @@ class CategoriesController extends Controller
 
     public function show($id)
     {
-        return __METHOD__;
+        $category = Category::findOrFail($id);
+        $this->authorize('view', $category);
         
         return view('admin.categories.show', [
-            'category' => Category::findOrFail($id),
+            'category' => $category,
         ]);
     }
 
@@ -110,6 +118,7 @@ class CategoriesController extends Controller
     {
         //$category = Category::where('id', '=', $id)->first();
         $category = Category::findOrFail($id);
+        $this->authorize('update', $category);
 
         $parents = Category::where('id', '<>', $id)
             ->orderBy('name', 'asc')
@@ -128,6 +137,7 @@ class CategoriesController extends Controller
         if ($category == null) {
             abort(404);
         }
+        $this->authorize('update', $category);
 
         //$this->validateRequest($request, $id);
 
@@ -146,14 +156,15 @@ class CategoriesController extends Controller
     public function destroy($id)
     {
         // Method 1
-        //$category = Category::find($id);
-        //$category->delete();
+        $category = Category::findOrFail($id);
+        $this->authorize('delete', $category);
+        $category->delete();
 
         // Method 2
         //Category::where('id', '=', $id)->delete();
 
         // Method 3
-        Category::destroy($id);
+        //Category::destroy($id);
 
         return redirect()
             ->route('admin.categories.index')

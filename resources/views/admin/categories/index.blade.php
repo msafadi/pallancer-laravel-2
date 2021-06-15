@@ -7,9 +7,11 @@
         My message body
     </x-alert>
 
+    @can('create', App\Models\Category::class)
     <div class="table-toolbar mb-3">
         <a href="{{ route('admin.categories.create') }}" class="btn btn-info">Create</a>
     </div>
+    @endcan
 
     <form action="{{ URL::current() }}" method="get" class="d-flex mb-4">
         <input type="text" name="name" class="form-control me-2" placeholder="Search by name">
@@ -41,11 +43,14 @@
                 <td>{{ $category->created_at }}</td>
                 <td>{{ $category->status }}</td>
                 <td>
+                    {{-- @if(Auth::user()->can('delete', $category)) --}}
+                    @can('delete', $category)
                     <form action="{{ route('admin.categories.destroy', $category->id) }}" method="post">
                         @csrf
                         @method('delete')
                         <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                     </form>
+                    @endcan
                 </td>
             </tr>
             @endforeach

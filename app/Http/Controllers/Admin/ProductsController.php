@@ -9,6 +9,7 @@ use App\Models\ProductImage;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -39,6 +40,10 @@ class ProductsController extends Controller
      */
     public function create()
     {
+        if (!Gate::allows('product.create')) {
+            abort(403);
+        }
+
         return view('admin.products.create', [
             'product' => new Product(),
             'categories' => Category::all(),
@@ -54,6 +59,10 @@ class ProductsController extends Controller
      */
     public function store(Request $request)
     {
+        if (Gate::denies('product.create')) {
+            abort(403);
+        }
+
         $request->validate(Product::validateRules());
         $request->merge([
             'slug' => Str::slug($request->post('name')),
@@ -104,6 +113,8 @@ class ProductsController extends Controller
      */
     public function edit($id)
     {
+        Gate::authorize('product.update');
+
         $product = Product::findOrFail($id);
         $tags = $product->tags()->pluck('name')->toArray();
 
@@ -123,6 +134,11 @@ class ProductsController extends Controller
      */
     public function update(Request $request, $id)
     {
+        Gate::authorize('product.update');
+
+        // $user = User::find(2);
+        //Gate::forUser($user)->authorize('product.update');
+
         $product = Product::findOrFail($id);
 
         $request->validate(Product::validateRules());

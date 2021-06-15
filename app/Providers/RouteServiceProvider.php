@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Middleware\Domain;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -42,6 +43,11 @@ class RouteServiceProvider extends ServiceProvider
                 ->middleware('api')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/api.php'));
+
+            /*Route::domain('{store}.localhost')
+                ->middleware('web', Domain::class)
+                ->namespace($this->namespace)
+                ->group(base_path('routes/web.php'));*/
 
             Route::middleware('web')
                 ->namespace($this->namespace)

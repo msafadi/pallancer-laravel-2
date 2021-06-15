@@ -22,7 +22,7 @@ class CheckUserType
         $user = $request->user();
 
         if (! in_array($user->type, $types) ) {
-            abort(403, 'You are not Admin');
+            abort(403, 'You are not allowed');
         }
 
         return $next($request);

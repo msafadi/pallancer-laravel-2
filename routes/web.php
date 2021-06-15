@@ -2,8 +2,13 @@
 
 use App\Http\Controllers\Auth\Stores\LoginController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Admin\CategoriesController;
+use App\Http\Controllers\Admin\TagsController;
+use App\Http\Controllers\Admin\UsersController;
 use App\Http\Middleware\CheckUserType;
 use Illuminate\Support\Facades\Route;
+
+//require __DIR__ . '/../vendor/laravel/fortify/routes/routes.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -22,7 +27,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth:web,store'])->name('dashboard');
 
-require __DIR__.'/auth.php';
+// require __DIR__.'/auth.php';
 
 /*
 Route::get('/stores/login', [LoginController::class, 'create'])
@@ -36,7 +41,7 @@ Route::post('/stores/login', [LoginController::class, 'store'])
 Route::namespace('Admin')
     ->prefix('admin')
     ->as('admin.')
-    ->middleware('auth', 'user.type:user')
+    ->middleware('auth', 'user.type:admin,store')
     ->group(function() {
 
         Route::group([
@@ -57,6 +62,8 @@ Route::namespace('Admin')
         Route::resource('products', 'ProductsController')->names([
             'index' => 'products.index',
         ]);
+
+        Route::resource('roles', 'RolesController');
     });
 
 
