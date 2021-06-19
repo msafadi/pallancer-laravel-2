@@ -44,7 +44,7 @@ Route::namespace('Admin')
     ->middleware('auth', 'user.type:admin,store')
     ->group(function() {
 
-        Route::group([
+        /*Route::group([
             'prefix' => 'categories',
             'as' => 'categories.',
         ], function() {
@@ -57,13 +57,25 @@ Route::namespace('Admin')
             Route::get('/{id}/edit', [CategoriesController::class, 'edit'])->name('edit');
             Route::put('/{id}', [CategoriesController::class, 'update'])->name('update');
             Route::delete('/{id}', [CategoriesController::class, 'destroy'])->name('destroy');
-        });
+        });*/
+
+        Route::get('categories/trash', [CategoriesController::class, 'trash'])->name('categories.trash');
+        Route::put('categories/trash/{id}', [CategoriesController::class, 'restore'])->name('categories.restore');
+        Route::delete('categories/trash/{id}', [CategoriesController::class, 'forceDelete'])->name('categories.force-delete');
         
+        Route::resources([
+            'categories' => 'CategoriesController',
+            'products' => 'ProductsController',
+            'roles' => 'RolesController'
+        ]);
+
+        /*Route::resource('categories', 'CategoriesController');
+
         Route::resource('products', 'ProductsController')->names([
             'index' => 'products.index',
         ]);
 
-        Route::resource('roles', 'RolesController');
+        Route::resource('roles', 'RolesController');*/
     });
 
 

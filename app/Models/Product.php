@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Product extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $perPage = 10;
 
@@ -26,9 +29,27 @@ class Product extends Model
         'category', 'store'
     ];*/
 
+    protected static function booted()
+    {
+        static::addGlobalScope('in-stock', function(Builder $builder) {
+            $builder->where('status', '=', 'in-stock');
+        });
+    }
+
+    public function scopeSoldout(Builder $builder)
+    {
+        $builder->where('status', '=', 'sold-out');
+    }
+
+    public function scopeStatus(Builder $builder, $status = 'in-stock')
+    {
+        $builder->where('status', '=', $status);
+    }
+
     public function category()
     {
-        return $this->belongsTo(Category::class, 'category_id', 'id');
+        return $this->belongsTo(Category::class, 'category_id', 'id')
+            ->withDefault();
     }
 
     public function store()
@@ -78,8 +99,8 @@ class Product extends Model
     public static function validateRules()
     {
         return [
-            'name' => 'required|string|max:255|min:3',
-            'category_id' => 'required|exists:categories,id',
+            'name' => 'sometimes|required|string|max:255|min:3',
+            'category_id' => 'sometimes|required|exists:categories,id',
             'image' => 'image',
             'price' => 'numeric|min:0',
             'sale_price' => ['numeric', 'min:0', function($attr, $value, $fail) {

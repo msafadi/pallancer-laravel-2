@@ -7,6 +7,7 @@ use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use App\Models\User;
 use App\Rules\WordsFilter;
+use App\Scopes\ActiveStatusScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -37,6 +38,7 @@ class CategoriesController extends Controller
             ])*/
             // Eager loading
             ->with('parent')
+            ->withoutGlobalScope(ActiveStatusScope::class)
             ->get();
         
         // SELECT * FROM categories
@@ -170,6 +172,31 @@ class CategoriesController extends Controller
             ->route('admin.categories.index')
             ->with('success', 'Category deleted');
 
+    }
+
+    public function trash()
+    {
+        return view('admin.categories.trash', [
+            'categories' => Category::onlyTrashed()->paginate(),
+        ]);
+    }
+
+    public function restore($id)
+    {
+        $category = Category::onlyTrashed()->findOrFail($id);
+        $category->restore();
+        return redirect()
+            ->route('admin.categories.trash')
+            ->with('success', 'Category restored');
+    }
+
+    public function forceDelete($id)
+    {
+        $category = Category::onlyTrashed()->findOrFail($id);
+        $category->forceDelete();
+        return redirect()
+            ->route('admin.categories.trash')
+            ->with('success', 'Category deleted forever.');
     }
 
     protected function validateRequest(Request $request, $id = 0)

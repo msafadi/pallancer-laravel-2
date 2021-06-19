@@ -25,7 +25,10 @@ class ProductsController extends Controller
         $products = Product::with('category')
             ->latest()
             ->orderBy('name', 'ASC')
+            ->withoutGlobalScopes()
+            ->status()
             ->paginate(5);
+            
 
         return view('admin.products.index', [
             'products' => $products,
@@ -113,9 +116,9 @@ class ProductsController extends Controller
      */
     public function edit($id)
     {
-        Gate::authorize('product.update');
+        //Gate::authorize('product.update');
 
-        $product = Product::findOrFail($id);
+        $product = Product::withoutGlobalScope('in-stock')->findOrFail($id);
         $tags = $product->tags()->pluck('name')->toArray();
 
         return view('admin.products.edit', [
