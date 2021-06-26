@@ -53,7 +53,29 @@
     </div>
 
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+    <script>
+    window.UserId = "{{ Auth::id() }}";
+    </script>
+    <script src="{{ asset('js/app.js') }}"></script>
     @stack('js')
+{{--
+    <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+  <script>
+
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher('9bbd1071bbb820b9aef1', {
+      cluster: 'ap2',
+      authEndpoint: "/broadcasting/auth"
+    });
+
+    var channel = pusher.subscribe('private-App.Models.User.{{ Auth::id() }}');
+    channel.bind('Illuminate\\Notifications\\Events\\BroadcastNotificationCreated', function(data) {
+      alert(data.title);
+    });
+  </script>
+  --}}
 </body>
 
 </html>

@@ -74,4 +74,19 @@ class User extends Authenticatable
 
         return false;
     }
+
+    public function routeNotificationForMail($notification = null)
+    {
+        return $this->email;
+    }
+
+    public function routeNotificationForNexmo($notification = null)
+    {
+        return $this->mobile;
+    }
+
+    public function receivesBroadcastNotificationsOn()
+    {
+        return 'App.Models.User.' . $this->id;
+    }
 }

@@ -11,9 +11,13 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.12",
         "laravel/jetstream": "^2.3",
+        "laravel/nexmo-notification-channel": "^2.5",
         "laravel/sanctum": "^2.6",
         "laravel/tinker": "^2.5",
-        "livewire/livewire": "^2.0"
+        "livewire/livewire": "^2.0",
+        "nexmo/laravel": "^2.4",
+        "pusher/pusher-php-server": "^7.0",
+        "symfony/intl": "^5.3"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

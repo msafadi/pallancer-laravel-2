@@ -3,9 +3,14 @@
 use App\Http\Controllers\Auth\Stores\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\CategoriesController;
+use App\Http\Controllers\Admin\NotificationsController;
 use App\Http\Controllers\Admin\TagsController;
 use App\Http\Controllers\Admin\UsersController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ProductsController;
 use App\Http\Middleware\CheckUserType;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
 //require __DIR__ . '/../vendor/laravel/fortify/routes/routes.php';
@@ -22,6 +27,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [HomeController::class, 'index']);
+Route::get('products/{slug}', [ProductsController::class, 'show'])->name('products.show');
+Route::get('cart', [CartController::class, 'index'])->name('cart');
+Route::post('cart', [CartController::class, 'store']);
+
+Route::get('checkout', [CheckoutController::class, 'index'])->name('checkout');
+Route::post('checkout', [CheckoutController::class, 'store']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -43,6 +54,8 @@ Route::namespace('Admin')
     ->as('admin.')
     ->middleware('auth', 'user.type:admin,store')
     ->group(function() {
+
+        Route::get('notifications', [NotificationsController::class, 'index'])->name('notifications');
 
         /*Route::group([
             'prefix' => 'categories',
@@ -104,3 +117,14 @@ Route::get('regexp', function() {
     dd($matches);
 
 });
+
+if (App::environment('production')) {
+    Route::get('/storage/{file}', function($file) {
+        $path = storage_path('app/public/' . $file);
+        if (!is_file($path)) {
+            abort(404);
+        }
+
+        return response()->file($path);
+    })->where('file', '.+');
+}
