@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\TagsController;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\MessagesController;
+use App\Http\Controllers\PayementsController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Middleware\CheckUserType;
 use Illuminate\Support\Facades\App;
@@ -128,3 +130,12 @@ if (App::environment('production')) {
         return response()->file($path);
     })->where('file', '.+');
 }
+
+Route::get('payments/{order}', [PayementsController::class, 'create'])->name('payments.create');
+Route::any('payments/paypal/callback', [PayementsController::class, 'callback'])->name('paypal.callback');
+Route::any('payments/paypal/cancel', [PayementsController::class, 'cancel'])->name('paypal.cancel');
+
+
+Route::get('messages', [MessagesController::class, 'index'])->name('messages');
+Route::get('messages/{peer_id}', [MessagesController::class, 'show'])->name('messages.peer');
+Route::post('messages/{peer_id}', [MessagesController::class, 'store']);

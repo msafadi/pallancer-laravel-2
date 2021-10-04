@@ -34,4 +34,19 @@ return [
         'sms_from' => '15556666666',
     ],
 
+    'maxmind' => [
+        'account_id' => env('MAXMIND_ACCOUNT_ID'),
+        'license_key' => env('MAXMIND_LICENSE_KEY'),
+    ],
+
+    'paypal' => [
+        'client_id' => env('PAYPAL_CLIENT_ID'),
+        'client_secret' => env('PAYPAL_CLIENT_SECRET'),
+    ],
+
+    'thawani' => [
+        'secret_key' => env('THAWANI_SECRET_KEY'),
+        'publishable_key' => env('THAWANI_PUBLISHABLE_KEY'),
+    ],
+
 ];

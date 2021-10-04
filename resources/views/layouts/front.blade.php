@@ -365,5 +365,7 @@ Replace: href="{{ asset('assets/$1') }}", src="{{ asset('assets/$1') }}"
 <script type="text/javascript" src="{{ asset('assets/plugins/revolution/js/extensions/revolution.extension.actions.min.js') }}"></script>
     <!-- Custom scripts-->
     <script type="text/javascript" src="{{ asset('assets/js/main.js') }}"></script>
+
+    <script type="text/javascript" src="{{ asset('js/messages.js') }}"></script>
   </body>
 </html>

@@ -89,4 +89,14 @@ class User extends Authenticatable
     {
         return 'App.Models.User.' . $this->id;
     }
+
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'recipient_id');
+    }
 }
