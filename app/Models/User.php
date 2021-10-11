@@ -75,6 +75,11 @@ class User extends Authenticatable
         return false;
     }
 
+    public function deviceTokens()
+    {
+        return $this->hasMany(DeviceToken::class);
+    }
+
     public function routeNotificationForMail($notification = null)
     {
         return $this->email;
@@ -83,6 +88,11 @@ class User extends Authenticatable
     public function routeNotificationForNexmo($notification = null)
     {
         return $this->mobile;
+    }
+
+    public function routeNotificationForFcm($notification = null)
+    {
+        return $this->deviceTokens()->pluck('token')->toArray();
     }
 
     public function receivesBroadcastNotificationsOn()

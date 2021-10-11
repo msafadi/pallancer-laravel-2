@@ -23,6 +23,14 @@ class Product extends Model
         'image', 'status', 'slug', 'store_id',
     ];
 
+    protected $appends = [
+        'image_url', 'url',
+    ];
+
+    protected $hidden = [
+        'image', 'status'
+    ];
+
     //protected $guarded = [];
 
     /*protected $with = [
@@ -94,6 +102,11 @@ class Product extends Model
     public function setNameAttribute($value)
     {
         $this->attributes['name'] = Str::title($value);
+    }
+
+    public function getUrlAttribute()
+    {
+        return route('products.show', $this->slug);
     }
 
     public static function validateRules()

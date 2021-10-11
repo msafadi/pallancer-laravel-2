@@ -24,6 +24,7 @@
         "tailwindcss": "^2.0.1"
     },
     "dependencies": {
-        "@yaireo/tagify": "^4.1.4"
+        "@yaireo/tagify": "^4.1.4",
+        "firebase": "^9.1.1"
     }
 }

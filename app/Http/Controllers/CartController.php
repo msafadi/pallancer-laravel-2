@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
 
+
 class CartController extends Controller
 {
     
@@ -58,6 +59,15 @@ class CartController extends Controller
                 'product_id' => $product_id,
                 'quantity' => $quantity,
             ]);
+        }
+
+        if ($request->expectsJson()) {
+            return [
+                'message' => 'Product added to cart',
+                'cart' => Cart::with('product')
+                    ->where('cart_id', App::make('cart.id'))
+                    ->get()
+            ];
         }
 
         return redirect()->back()

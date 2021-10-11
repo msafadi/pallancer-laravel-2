@@ -10,6 +10,14 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\NexmoMessage;
 
+use NotificationChannels\Fcm\FcmChannel;
+use NotificationChannels\Fcm\FcmMessage;
+use NotificationChannels\Fcm\Resources\AndroidConfig;
+use NotificationChannels\Fcm\Resources\AndroidFcmOptions;
+use NotificationChannels\Fcm\Resources\AndroidNotification;
+use NotificationChannels\Fcm\Resources\ApnsConfig;
+use NotificationChannels\Fcm\Resources\ApnsFcmOptions;
+
 class NewOrderCreatedNotification extends Notification
 {
     use Queueable;
@@ -34,7 +42,8 @@ class NewOrderCreatedNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database', 'broadcast', 'nexmo'];
+        //return ['mail', 'database', 'broadcast', 'nexmo'];
+        return [FcmChannel::class];
     }
 
     /**
@@ -84,6 +93,26 @@ class NewOrderCreatedNotification extends Notification
     public function toNexmo($notifiable)
     {
         return (new NexmoMessage())->content('A new order has beeen created');
+    }
+
+    public function toFcm($notifiable)
+    {
+        return FcmMessage::create()
+            ->setData([
+                'order_id' => $this->order->id,
+                'user' => $this->order->user->name,
+            ])
+            ->setNotification(\NotificationChannels\Fcm\Resources\Notification::create()
+                ->setTitle('New Order')
+                ->setBody('A new order has beeen created.')
+                ->setImage('http://example.com/url-to-image-here.png'))
+            ->setAndroid(
+                AndroidConfig::create()
+                    ->setFcmOptions(AndroidFcmOptions::create()->setAnalyticsLabel('analytics'))
+                    ->setNotification(AndroidNotification::create()->setColor('#0A0A0A'))
+            )->setApns(
+                ApnsConfig::create()
+                    ->setFcmOptions(ApnsFcmOptions::create()->setAnalyticsLabel('analytics_ios')));
     }
 
     /**

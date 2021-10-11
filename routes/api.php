@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\DeviceTokensController;
 use App\Http\Controllers\Api\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,3 +27,5 @@ Route::apiResource('products', 'Api\ProductsController');
 
 Route::post('login', [LoginController::class, 'login']);
 Route::post('logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
+Route::post('device-tokens', [DeviceTokensController::class, 'store'])
+    ->middleware('auth:sanctum');

@@ -27,6 +27,10 @@ class Store extends User implements MustVerifyEmail
 
     const UPDATED_AT = 'updated_at';
 
+    protected $fillable = [
+        'name', 'slug',
+    ];
+
     public function products()
     {
         return $this->hasMany(Product::class, 'store_id', 'id');
