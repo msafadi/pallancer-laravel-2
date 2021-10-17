@@ -28,7 +28,12 @@
                   </td>
                   <td>${{ $item->product->price * $item->quantity }}</td>
                   <td>
-                    <div class="ps-remove"></div>
+                    <form action="{{ route('cart.destroy', $item->product_id) }}" method="post">
+                      @csrf
+                      @method('delete')
+                      <button type="submit" class="ps-remove"></button>
+                    </form>
+                    
                   </td>
                 </tr>
                 @endforeach

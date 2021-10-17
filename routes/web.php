@@ -12,6 +12,7 @@ use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\PayementsController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Middleware\CheckUserType;
+use App\Models\User;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,7 @@ Route::get('/', [HomeController::class, 'index']);
 Route::get('products/{slug}', [ProductsController::class, 'show'])->name('products.show');
 Route::get('cart', [CartController::class, 'index'])->name('cart');
 Route::post('cart', [CartController::class, 'store']);
+Route::delete('cart/{product_id}', [CartController::class, 'destroy'])->name('cart.destroy');
 
 Route::get('checkout', [CheckoutController::class, 'index'])->name('checkout');
 Route::post('checkout', [CheckoutController::class, 'store']);
@@ -139,3 +141,13 @@ Route::any('payments/paypal/cancel', [PayementsController::class, 'cancel'])->na
 Route::get('messages', [MessagesController::class, 'index'])->name('messages');
 Route::get('messages/{peer_id}', [MessagesController::class, 'show'])->name('messages.peer');
 Route::post('messages/{peer_id}', [MessagesController::class, 'store']);
+
+Route::get('validate/email/{email}', function($email) {
+
+    $exists = User::where('email', '=', $email)->exists();
+    return [
+        'exists' => $exists,
+        'msg' => $exists? 'Email already used' : 'Email avialable',
+    ];
+
+})->name('validate.email');

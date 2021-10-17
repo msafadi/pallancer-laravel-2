@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Product;
+use App\Repositories\Cart\Cart as CartRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
@@ -14,63 +15,40 @@ use Illuminate\Support\Str;
 class CartController extends Controller
 {
     
-    public function index()
+    public function index(CartRepository $cart)
     {
-        //app()->make('cart.id');
-        //app('cart.id');
-        $cart = Cart::with('product')
-            ->where('cart_id', App::make('cart.id'))
-            ->get();
-
-        $total = $cart->sum(function($item) {
-            return $item->product->price * $item->quantity;
-        });
-
         return view('front.cart', [
-            'cart' => $cart,
-            'total' => $total,
+            'cart' => $cart->all(),
+            'total' => $cart->total(),
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, CartRepository $cart)
     {
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity' => 'int|min:1',
         ]);
 
-        $cart_id = App::make('cart.id');
-        $product_id = $request->post('product_id');
-        $quantity = $request->post('quantity', 1);
-
-        $product = Product::findOrFail( $product_id );
-
-        $cart = Cart::where([
-            'cart_id' => $cart_id,
-            'product_id' => $product_id,
-        ])->first();
-        
-        if ($cart) {
-            $cart->increment('quantity', $quantity);
-        } else {
-            $cart = Cart::create([
-                'user_id' => Auth::id(),
-                'cart_id' => $cart_id,
-                'product_id' => $product_id,
-                'quantity' => $quantity,
-            ]);
-        }
+        $product = Product::findOrFail( $request->product_id );
+        $cart->add($request->product_id, $request->input('quantity', 1));
 
         if ($request->expectsJson()) {
             return [
                 'message' => 'Product added to cart',
-                'cart' => Cart::with('product')
-                    ->where('cart_id', App::make('cart.id'))
-                    ->get()
+                'cart' => $cart->all(),
             ];
         }
 
         return redirect()->back()
             ->with('status', "Product {$product->name} added to cart.");
+    }
+
+    public function destroy(CartRepository $cart, $product_id)
+    {
+        $cart->remove($product_id);
+        return redirect()->back()
+            ->with('status', "Item removed from cart.");
+
     }
 }

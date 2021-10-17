@@ -33,17 +33,6 @@ class AppServiceProvider extends ServiceProvider
                 return base_path('public_html');
             });
         }
-
-        $this->app->bind('cart.id', function() {
-            $id = Cookie::get('cart_id');
-            if (!$id) {
-                $id = Str::uuid();
-                Cookie::queue('cart_id', $id, 60 * 24 * 30);
-            }
-
-            return $id;
-        });
-
         //
         Validator::extend('filter', function($attribute, $value, $params) {
             foreach ($params as $word) {
