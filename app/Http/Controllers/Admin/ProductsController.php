@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\ProductsExport;
 use App\Http\Controllers\Controller;
+use App\Imports\ProductsImport;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
@@ -12,28 +14,66 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductsController extends Controller
 {
+
+    protected function query(Request $request)
+    {
+        return Product::with('category')
+            ->latest()
+            ->orderBy('name', 'ASC')
+            ->withoutGlobalScopes()
+            ->status()
+            ->when($request->name, function($query, $value) {
+                $query->where('name', 'LIKE', "%{$value}%");
+            })
+            ->when($request->category_id, function($query, $value) {
+                $query->where('category_id', '=', $value);
+            });
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with('category')
-            ->latest()
-            ->orderBy('name', 'ASC')
-            ->withoutGlobalScopes()
-            ->status()
-            ->paginate(5);
-            
+        $products = $this->query($request)->paginate(5);
 
         return view('admin.products.index', [
             'products' => $products,
             'categories' => Category::all(),
         ]);
+    }
+
+    public function export(Request $request)
+    {
+        $query = $this->query($request);
+
+        $export = new ProductsExport();
+        $export->setQuery($query);
+
+        return Excel::download($export, 'products.xlsx');
+    }
+
+    public function importView()
+    {
+        return view('admin.products.import');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => ['required', 'mimes:xls,xlsx,csv'],
+        ]);
+
+        Excel::import(new ProductsImport, $request->file('file')->path());
+
+        return redirect()->route('admin.products.index')
+            ->with('success', "Products imported!");
     }
 
     /**
@@ -76,7 +116,9 @@ class ProductsController extends Controller
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $data['image'] = $file->store('/');
+            $data['image'] = $file->store('/images', [
+                'disk' => 'uploads'
+            ]);
         }
         
         // $data = $request->all();

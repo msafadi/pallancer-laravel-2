@@ -49,4 +49,10 @@ return [
         'publishable_key' => env('THAWANI_PUBLISHABLE_KEY'),
     ],
 
+    'custom-sms' => [
+        'user' => env('CUSTOM_SMS_USER'),
+        'pass' => env('CUSTOM_SMS_PASS'),
+        'sender' => 'Test',
+    ],
+
 ];

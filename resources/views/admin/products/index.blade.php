@@ -4,11 +4,13 @@
     
     <div class="table-toolbar mb-3">
         <a href="{{ route('admin.products.create') }}" class="btn btn-info">Create</a>
+        <a href="{{ route('admin.products.export', request()->query()) }}" class="btn btn-dark">Export</a>
+        <a href="{{ route('admin.products.import') }}" class="btn btn-success">Import</a>
     </div>
 
     <form action="{{ URL::current() }}" method="get" class="d-flex mb-4">
         <input type="text" name="name" class="form-control me-2" placeholder="Search by name">
-        <select name="parent_id" class="form-control me-2">
+        <select name="category_id" class="form-control me-2">
             <option value="">All Categories</option>
             @foreach ($categories as $category)
             <option value="{{ $category->id }}">{{ $category->name }}</option>

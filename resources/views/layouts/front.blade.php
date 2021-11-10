@@ -10,7 +10,7 @@ Replace: href="{{ asset('assets/$1') }}", src="{{ asset('assets/$1') }}"
 <!--[if IE 7]><html class="ie ie7"><![endif]-->
 <!--[if IE 8]><html class="ie ie8"><![endif]-->
 <!--[if IE 9]><html class="ie ie9"><![endif]-->
-<html lang="en">
+<html lang="{{ App::currentLocale() }}" dir="{{ LaravelLocalization::getCurrentLocaleDirection() }}">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -29,7 +29,11 @@ Replace: href="{{ asset('assets/$1') }}", src="{{ asset('assets/$1') }}"
     <link rel="stylesheet" href="{{ asset('assets/plugins/font-awesome/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/plugins/ps-icon/style.css') }}">
     <!-- CSS Library-->
+    @if (LaravelLocalization::getCurrentLocaleDirection() == 'rtl') 
+    <link rel="stylesheet" href="{{ asset('assets/plugins/bootstrap/dist/css/bootstrap.rtl.min.css') }}">
+    @else
     <link rel="stylesheet" href="{{ asset('assets/plugins/bootstrap/dist/css/bootstrap.min.css') }}">
+    @endif
     <link rel="stylesheet" href="{{ asset('assets/plugins/owl-carousel/assets/owl.carousel.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/plugins/jquery-bar-rating/dist/themes/fontawesome-stars.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/plugins/slick/slick/slick.css') }}">
@@ -40,7 +44,11 @@ Replace: href="{{ asset('assets/$1') }}", src="{{ asset('assets/$1') }}"
     <link rel="stylesheet" href="{{ asset('assets/plugins/revolution/css/layers.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/plugins/revolution/css/navigation.css') }}">
     <!-- Custom-->
+    @if (LaravelLocalization::getCurrentLocaleDirection() == 'rtl') 
+    <link rel="stylesheet" href="{{ asset('assets/css/style.rtl.css') }}">
+    @else
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    @endif
     <!--HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries-->
     <!--WARNING: Respond.js doesn't work if you view the page via file://-->
     <!--[if lt IE 9]><script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -67,13 +75,7 @@ Replace: href="{{ asset('assets/$1') }}", src="{{ asset('assets/$1') }}"
                         <li><a href="#"><img src="{{ asset('assets/images/flag/japan.svg') }}" alt=""> JPN</a></li>
                       </ul>
                     </div>
-                    <div class="btn-group ps-dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Language<i class="fa fa-angle-down"></i></a>
-                      <ul class="dropdown-menu">
-                        <li><a href="#">English</a></li>
-                        <li><a href="#">Japanese</a></li>
-                        <li><a href="#">Chinese</a></li>
-                      </ul>
-                    </div>
+                    <x-language-switcher />
                   </div>
                 </div>
           </div>

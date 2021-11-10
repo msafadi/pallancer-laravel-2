@@ -7,10 +7,10 @@
             <table class="table ps-cart__table">
               <thead>
                 <tr>
-                  <th>All Products</th>
-                  <th>Price</th>
-                  <th>Quantity</th>
-                  <th>Total</th>
+                  <th>{{ __('All Products') }}</th>
+                  <th>{{ __('Price') }}</th>
+                  <th>{{ __('Quantity') }}</th>
+                  <th>{{ __('Total') }}</th>
                   <th></th>
                 </tr>
               </thead>

@@ -1,20 +1,23 @@
 <?php
 
-use App\Http\Controllers\Auth\Stores\LoginController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Admin\CategoriesController;
-use App\Http\Controllers\Admin\NotificationsController;
-use App\Http\Controllers\Admin\TagsController;
-use App\Http\Controllers\Admin\UsersController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\MessagesController;
-use App\Http\Controllers\PayementsController;
-use App\Http\Controllers\ProductsController;
-use App\Http\Middleware\CheckUserType;
 use App\Models\User;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\CheckUserType;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ImagesController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\MessagesController;
+use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\PayementsController;
+use App\Http\Controllers\Admin\TagsController;
+use App\Http\Controllers\Admin\UsersController;
+use App\Http\Controllers\Admin\OrdersController;
+use App\Http\Controllers\Admin\CategoriesController;
+use App\Http\Controllers\Auth\Stores\LoginController;
+use App\Http\Controllers\Admin\NotificationsController;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 //require __DIR__ . '/../vendor/laravel/fortify/routes/routes.php';
 
@@ -29,14 +32,29 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [HomeController::class, 'index']);
-Route::get('products/{slug}', [ProductsController::class, 'show'])->name('products.show');
-Route::get('cart', [CartController::class, 'index'])->name('cart');
-Route::post('cart', [CartController::class, 'store']);
-Route::delete('cart/{product_id}', [CartController::class, 'destroy'])->name('cart.destroy');
+// images/300x200/products/image.png
+Route::get('images/{disk}/{width}x{height}/{image}', [ImagesController::class, 'index'])
+    ->name('images')
+    ->where('image', '.*');
 
-Route::get('checkout', [CheckoutController::class, 'index'])->name('checkout');
-Route::post('checkout', [CheckoutController::class, 'store']);
+Route::get('/newsletter', [HomeController::class, 'newsletter']);
+
+Route::group([
+    'prefix' => LaravelLocalization::setLocale(),
+    
+], function() {
+    Route::get('/', [HomeController::class, 'index']);
+
+    Route::get('products/{slug}', [ProductsController::class, 'show'])->name('products.show');
+    Route::get('cart', [CartController::class, 'index'])->name('cart');
+    Route::post('cart', [CartController::class, 'store']);
+    Route::delete('cart/{product_id}', [CartController::class, 'destroy'])->name('cart.destroy');
+
+    Route::get('checkout', [CheckoutController::class, 'index'])->name('checkout');
+    Route::post('checkout', [CheckoutController::class, 'store']);
+
+});
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -56,11 +74,13 @@ Route::post('/stores/login', [LoginController::class, 'store'])
 Route::namespace('Admin')
     ->prefix('admin')
     ->as('admin.')
-    ->middleware('auth', 'user.type:admin,store')
+    ->middleware('auth', 'user.type:super-admin,admin,store')
     ->group(function() {
 
         Route::get('notifications', [NotificationsController::class, 'index'])->name('notifications');
 
+        Route::get('orders/{order}/print', [OrdersController::class, 'print']);
+        
         /*Route::group([
             'prefix' => 'categories',
             'as' => 'categories.',
@@ -80,6 +100,14 @@ Route::namespace('Admin')
         Route::put('categories/trash/{id}', [CategoriesController::class, 'restore'])->name('categories.restore');
         Route::delete('categories/trash/{id}', [CategoriesController::class, 'forceDelete'])->name('categories.force-delete');
         
+
+        Route::get('products/export', 'ProductsController@export')
+            ->name('products.export');
+        Route::get('products/import', 'ProductsController@importView')
+            ->name('products.import');
+        Route::post('products/import', 'ProductsController@import');
+
+
         Route::resources([
             'categories' => 'CategoriesController',
             'products' => 'ProductsController',
@@ -151,3 +179,11 @@ Route::get('validate/email/{email}', function($email) {
     ];
 
 })->name('validate.email');
+
+
+Route::get('database/backup', function() {
+    $config = config('database.connections.mysql');
+    $file = storage_path('backups/' . date('YmdHis') . '.sql');
+
+    exec("mysqldump -u {$config['username']} –p{$config['password']} {$config['database']} > {$file}");
+});

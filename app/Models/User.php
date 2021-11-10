@@ -90,6 +90,11 @@ class User extends Authenticatable
         return $this->mobile;
     }
 
+    public function routeNotificationForSms($notification = null)
+    {
+        return $this->mobile;
+    }
+
     public function routeNotificationForFcm($notification = null)
     {
         return $this->deviceTokens()->pluck('token')->toArray();

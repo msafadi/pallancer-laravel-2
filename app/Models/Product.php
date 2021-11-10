@@ -82,6 +82,11 @@ class Product extends Model
         );
     }
 
+    public function variants()
+    {
+        return $this->hasMany(Variant::class);
+    }
+
     // Accessors:
     // get{AttrName}Attribute
     // $product->image_url
@@ -93,6 +98,20 @@ class Product extends Model
             }
             //return asset('uploads/' . $this->image);
             return Storage::disk('uploads')->url($this->image);
+        }
+
+        return asset('images/default-image.jpg');
+    }
+
+    public function getThumbUrlAttribute()
+    {
+        if ($this->image) {
+            if (strpos($this->image, 'http') === 0) {
+                return $this->image;
+            }
+            return route('images', [
+                'uploads', '265', '265', $this->image
+            ]);
         }
 
         return asset('images/default-image.jpg');

@@ -26,11 +26,11 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         //
-        /*Gate::before(function($user, $ability) {
+        Gate::before(function($user, $ability) {
             if ($user->type == 'super-admin') {
                 return true;
             }
-        });*/
+        });
 
         Gate::define('product.create', function($user) {
             return true;

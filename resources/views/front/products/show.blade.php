@@ -45,17 +45,17 @@
                     <option value="1">3</option>
                     <option value="1">4</option>
                     <option value="2">5</option>
-                  </select><a href="#">(Read all 8 reviews)</a>
+                  </select><a href="#">({{ trans_choice('app.read_reviews', 2, ['count' => 2]) }})</a>
                 </div>
                 <h1>{{ $product->name }}</h1>
                 <p class="ps-product__category"><a href="#">{{ $product->category->name }}</a></p>
                 <h3 class="ps-product__price">${{ $product->price }} <del>${{ $product->sale_price }}</del></h3>
                 <div class="ps-product__block ps-product__quickview">
-                  <h4>QUICK REVIEW</h4>
+                  <h4>@lang('QUICK REVIEW')</h4>
                   <p>{{ $product->description }}</p>
                 </div>
                 <div class="ps-product__block ps-product__style">
-                  <h4>CHOOSE YOUR STYLE</h4>
+                  <h4>{{ __('CHOOSE YOUR STYLE') }}</h4>
                   <ul>
                     <li><a href="product-detail.html"><img src="images/shoe/sidebar/1.jpg" alt=""></a></li>
                     <li><a href="product-detail.html"><img src="images/shoe/sidebar/2.jpg" alt=""></a></li>
@@ -88,7 +88,7 @@
                   </div>
                 </div>
                 <div class="ps-product__shopping">
-                    <a id="add-to-cart" class="ps-btn mb-10" href="#">Add to cart<i class="ps-icon-next"></i></a>
+                    <a id="add-to-cart" class="ps-btn mb-10" href="#">{{ trans('Add to cart') }}<i class="ps-icon-next"></i></a>
                     <div class="ps-product__actions"><a class="mr-10" href="whishlist.html"><i class="ps-icon-heart"></i></a><a href="compare.html"><i class="ps-icon-share"></i></a></div>
                 </div>
                 </form>

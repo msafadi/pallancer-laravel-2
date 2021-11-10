@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\NewProductsEmail;
+use App\Mail\NewProductsNewsletter;
 use App\Models\Product;
+use App\Models\User;
 use App\Services\GeoIP\MaxMindGeoLite;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Mail;
 
 class HomeController extends Controller
 {
@@ -20,5 +25,14 @@ class HomeController extends Controller
         return view('front.home', [
             'latest' => $latest,
         ]);
+    }
+
+    public function newsletter()
+    {
+        dispatch(new NewProductsEmail())
+            ->onQueue('emails')
+            ->delay(Carbon::now()->addMinutes(10));
+
+        dispatch(new NewProductsEmail())->onQueue('emails');
     }
 }

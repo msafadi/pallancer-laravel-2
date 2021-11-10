@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Channels\CustomSms;
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -43,7 +44,7 @@ class NewOrderCreatedNotification extends Notification
     public function via($notifiable)
     {
         //return ['mail', 'database', 'broadcast', 'nexmo'];
-        return [FcmChannel::class];
+        return [FcmChannel::class, CustomSms::class];
     }
 
     /**
@@ -113,6 +114,11 @@ class NewOrderCreatedNotification extends Notification
             )->setApns(
                 ApnsConfig::create()
                     ->setFcmOptions(ApnsFcmOptions::create()->setAnalyticsLabel('analytics_ios')));
+    }
+
+    public function toSms($notifiable)
+    {
+        return 'A new order has beeen created & sent to processing.';
     }
 
     /**

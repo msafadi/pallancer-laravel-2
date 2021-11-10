@@ -12,6 +12,10 @@ class Category extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $fillable = [
+        'name', 'slug', 'parent_id',
+    ];
+
     protected static function booted()
     {
         static::addGlobalScope(new ActiveStatusScope);
